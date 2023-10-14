@@ -1,10 +1,11 @@
-import codecs
 import csv
+
 
 class Item:
     """Класс для представления товара в магазине."""
     pay_rate = 1.0
     all = []
+    data = []
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """Создание экземпляра класса item.
@@ -19,23 +20,19 @@ class Item:
 
         Item.all.append(self)
 
-
     def calculate_total_price(self) -> float:
         """Рассчитывает общую стоимость конкретного товара в магазине.
         :return: Общая стоимость товара."""
         return self.price * self.quantity
 
-
     def apply_discount(self) -> None:
         """Применяет установленную скидку для конкретного товара."""
         self.price *= self.pay_rate
-
 
     @property
     def name(self):
         """Добавляем геттер для `name`, используя @property"""
         return self.__name
-
 
     @name.setter
     def name(self, name):
@@ -46,12 +43,11 @@ class Item:
         else:
             self.__name = name
 
-
     @classmethod
     def instantiate_from_csv(cls, filename: str) -> None:
         """Класс-метод, инициализирующий экземпляры класса `Item` данными из файла _src/items.csv_"""
         cls.all.clear()
-        with codecs.open(filename, 'r', encoding='utf-8', errors='replace') as file:
+        with open(filename, newline='') as file:
             data = csv.DictReader(file)
             items = []
             for d in data:
@@ -60,12 +56,18 @@ class Item:
                 quantity = int(d['quantity'])
                 item = cls(name, price, quantity)
                 items.append(item)
-
             cls.all = items
-
 
     @staticmethod
     def string_to_number(str_number: str):
         """Cтатический метод, возвращающий число из числа-строки"""
         number = str_number.split('.')
         return int(number[0])
+
+    def __repr__(self):
+        """Отображает информацию в режиме отладки"""
+        return f"{self.__class__.__name__}('{self.__name}', {self.price}, {self.quantity})"
+
+    def __str__(self):
+        """Отображает информацию в режиме для пользователя"""
+        return self.__name

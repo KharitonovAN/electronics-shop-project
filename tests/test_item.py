@@ -23,8 +23,29 @@ def test_name_setter():
     assert item.name == 'Test_1'
 
 
-def test_len_name():
-    """Проверка длины имени не более 10 символов"""
-    item = Item('Test', 20.0, 5)
-    item.name = 'Смартфон'
-    assert item.name == 'Смартфон'
+def test_name():
+    """Проверка на длину названия, не более 10 символов"""
+    item = Item('Test', 20, 5)
+    item.name = 'СуперСмартфон'
+    assert item.name == 'СуперСмарт'
+
+
+def test__repr__():
+    """Тест метода __repr__"""
+    item = Item('Test', 20, 5)
+    assert repr(item) == "Item('Test', 20, 5)"
+
+
+def test__str__():
+    """Тест метода __str__"""
+    item = Item('Test', 20, 5)
+    assert str(item) == 'Test'
+
+
+def test__init__():
+    """Тестирование __init__"""
+    item = Item('Test', 20, 5)
+    assert item.name == 'Test'
+    assert item.price == 20
+    assert item.quantity == 5
+
