@@ -71,3 +71,8 @@ class Item:
     def __str__(self):
         """Отображает информацию в режиме для пользователя"""
         return self.__name
+
+    def __add__(self, other):
+        """Сложение количества товаров из классов Item и Phone"""
+        if isinstance(other, Item):
+            return self.quantity + other.quantity
