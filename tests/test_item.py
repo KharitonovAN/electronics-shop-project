@@ -1,20 +1,6 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
-from src.item import Item
-from src.phone import Phone
-
-
-def test_calculate_total_price():
-    """Тестирование метода calculate_total_price класса Item."""
-    item = Item('Test', 5, 5)
-    assert item.calculate_total_price() == 25
-
-
-def test_apply_discount():
-    """Тестирование метода apply_discount класса Item."""
-    item = Item('Test', 20.0, 5)
-    item.pay_rate = 0.5
-    item.apply_discount()
-    assert item.price == 10
+import pytest
+from src.item import Item, InstantiateCSVError
 
 
 def test_name_setter():
@@ -55,12 +41,63 @@ def test_string_to_number():
     """Тест на функцию создания экземпляров"""
     assert Item.string_to_number('5') == 5
 
-def test_add_items():
-    """Проверка на верное количество при сложении из разных классов"""
-    item1 = Item('test1', 20.0, 1)
-    item2 = Item('test2', 10, 2)
-    phone1 = Phone('test3', 10, 3, 2)
-    phone2 = Phone('test4', 10, 4, 2)
-    assert item1 + item2 == 3
-    assert item1 + phone1 == 4
-    assert phone1 + phone2 == 7
+
+def setup_class(self):
+    """Установка начального состояния перед выполнением тестов"""
+    self.item = Item("Test Item", 10.0, 5)
+
+
+def test_init(self):
+    """Проверяет инициализацию экземпляра Item"""
+    assert self.item.name == "Test Item"
+    assert self.item.price == 10.0
+    assert self.item.quantity == 5
+
+
+def test_string_conversion(self):
+    """Проверяет строковое представление экземпляра Item"""
+    assert str(self.item) == "Test Item"
+    assert repr(self.item) == "Item('Test Item', 10.0, 5)"
+
+
+def test_add_items(self):
+    """Проверяет оператор сложения экземпляров Item"""
+    new_item = Item("Another Item", 5.0, 3)
+    combined_item = self.item + new_item
+    assert combined_item.quantity == 8
+
+
+def test_instantiate_from_csv_with_nonexistent_file():
+    """Проверяет исключение при попытке загрузить несуществующий CSV-файл"""
+    with pytest.raises(FileNotFoundError):
+        Item.instantiate_from_csv("nonexistent.csv")
+
+
+def test_name_property(self):
+    """Проверяет ограничение на длину свойства name"""
+    self.item.name = "A Very Long Name for an Item with More Than 20 Characters"
+    assert len(self.item.name) == 10  # Убедимся, что ограничение на 10 символов работает
+
+
+def test_calculate_total_price(self):
+    """Проверяет расчет общей стоимости товара."""
+    assert self.item.calculate_total_price() == 50.0
+
+
+def test_apply_discount(self):
+    """Проверяет применение скидки к товару."""
+    self.item.apply_discount()
+    assert self.item.price == 10.0 * Item.pay_rate
+
+
+# Тесты для класса InstantiateCSVError
+class TestInstantiateCSVError:
+    """
+    Тесты для класса InstantiateCSVError.
+    """
+    def test_init(self):
+        """
+        Проверяет инициализацию экземпляра InstantiateCSVError.
+        """
+        error = InstantiateCSVError("Test error message")
+        assert str(error) == "Test error message"

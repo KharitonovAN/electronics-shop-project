@@ -1,6 +1,12 @@
 import csv
 
 
+class InstantiateCSVError(Exception):
+    """Класс исключения для ошибок при инициализации из CSV"""
+    def __init__(self, message):
+        super().__init__(message)
+
+
 class Item:
     """Класс для представления товара в магазине."""
     pay_rate = 1.0
@@ -44,19 +50,26 @@ class Item:
             self.__name = name
 
     @classmethod
-    def instantiate_from_csv(cls, filename: str) -> None:
+    def instantiate_from_csv(cls, filename: str = '../src/items.csv'):
         """Класс-метод, инициализирующий экземпляры класса `Item` данными из файла _src/items.csv_"""
-        cls.all.clear()
-        with open(filename, newline='') as file:
-            data = csv.DictReader(file)
-            items = []
-            for d in data:
-                name = d['name']
-                price = float(d['price'])
-                quantity = int(d['quantity'])
-                item = cls(name, price, quantity)
-                items.append(item)
-            cls.all = items
+        try:
+            with open(filename, 'r', newline='') as file:
+                data = csv.DictReader(file)
+                items = []
+                for data_ in data:
+                    try:
+                        name = data_['name']
+                        price = float(data_['price'])
+                        quantity = int(data_['quantity'])
+                    except KeyError:
+                        raise InstantiateCSVError("Файл item.csv поврежден: отсутствует одна из колонок данных")
+                    item = cls(name, price, quantity)
+                    items.append(item)
+
+                cls.all = items
+        except FileNotFoundError:
+            raise FileNotFoundError("Отсутствует файл item.csv")
+
 
     @staticmethod
     def string_to_number(str_number: str):

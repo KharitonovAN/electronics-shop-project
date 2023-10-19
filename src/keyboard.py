@@ -7,19 +7,19 @@ class MixinLang:
         """Инициализация класс-миксина keyboard
         language: Язык раскладки
         По умолчанию 'EN'"""
-        self.language = 'EN'
+        self.__language = 'EN'
 
     def change_lang(self):
         """Функция для изменения языка (раскладки клавиатуры).
         Всего поддерживается два языка: `EN` и `RU`"""
-        if self.language == 'EN':
-            self.language = 'RU'
+        if self.__language == 'EN':
+            self.__language = 'RU'
         else:
-            self.language = 'EN'
+            self.__language = 'EN'
 
     def save_lang(self):
         """Функция для хранения раскладки клавиатуры"""
-        return self.language
+        return self.__language
 
 
 class Keyboard(Item, MixinLang):
